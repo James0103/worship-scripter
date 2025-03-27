@@ -21,8 +21,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
-import hymnsData from '../data/hymns.json'
+import { ref, computed, watch, onMounted } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -39,6 +38,17 @@ const emit = defineEmits(['update:modelValue'])
 
 const searchQuery = ref(props.modelValue)
 const showResults = ref(false)
+const hymnsData = ref({ hymns: [] })
+
+// 데이터 로드
+onMounted(async () => {
+  try {
+    const response = await fetch('/data/hymns.json')
+    hymnsData.value = await response.json()
+  } catch (error) {
+    console.error('찬송가 목록 로드 실패:', error)
+  }
+})
 
 // props.modelValue가 외부에서 변경될 때 searchQuery 업데이트
 watch(
@@ -51,7 +61,7 @@ watch(
 const filteredResults = computed(() => {
   if (!searchQuery.value) return []
   const query = searchQuery.value.toLowerCase()
-  return hymnsData.hymns.filter(
+  return hymnsData.value.hymns.filter(
     (hymn) =>
       hymn.fullTitle.toLowerCase().includes(query) ||
       hymn.id.includes(query) ||

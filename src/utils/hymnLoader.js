@@ -1,6 +1,7 @@
 export async function loadHymnLyrics(id) {
   try {
-    const response = await fetch(`/src/data/${id}.json`)
+    // const response = await fetch(`/src/data/${id}.json`)
+    const response = await fetch(`/data/${id}.json`)
     const data = await response.json()
     return data['lyrics']
   } catch (error) {
